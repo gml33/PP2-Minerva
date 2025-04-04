@@ -1,0 +1,13 @@
+.form-layout{
+    border-radius: 15px;
+    width: 500px;
+}
+
+#listado{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    background-color: blue;
+    color: brown;
+}

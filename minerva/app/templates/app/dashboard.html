@@ -1,0 +1,24 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_periodico' %}">
+    Agregar Periodico
+</a>
+<hr> 
+    {% if periodicos %}
+    <div style='
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;'>
+        {% for periodico in periodicos %}
+        <div class="card" style="width: 14rem;">
+            <img class="card-img-top" src='{{periodico.logo}}' alt="{{periodico.nombre}}">
+            <div class="card-body">
+                <h5 class="card-title">{{periodico.nombre}}</h5>
+                <a href="#" class="btn btn-primary">Agregar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endblock %}
