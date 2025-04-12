@@ -6,6 +6,8 @@ from .forms import *
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import auth
 from .models import *
+from django.http  import JsonResponse
+from django.core import serializers
 
 def home(request):
     return render(request, 'registro/index.html')
@@ -16,7 +18,7 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('my-login')
+            return redirect('app:my-login')
     context={'form':form}
     return render(request, 'registro/register.html', context=context)
 
@@ -31,24 +33,22 @@ def my_login(request):
             if user is not None:
                 auth.login(request, user)
                 #bot.send_message(chat_id, text='Logueado')
-                return redirect('dashboard')
+                return redirect('app:dashboard')
     context = {'form':form}
     return render(request, 'registro/my-login.html', context=context)
 
-@login_required(login_url='my-login')
+@login_required(login_url='app:my-login')
 def dashboard(request):
     periodicos_all = Periodico.objects.all()
     paginator = Paginator(periodicos_all, 20)
     page = request.GET.get('page')
     periodicos = paginator.get_page(page)
-    context = {
-        'periodicos':periodicos,
-    }
+    context = {'periodicos': periodicos}
     return render(request, 'app/dashboard.html', context=context)
 
 def user_logout(request):
     auth.logout(request)
-    return redirect('my-login')
+    return redirect('app:my-login')
 
 #----------------------------Periodicos--------------------
 @login_required(login_url='my-login')
