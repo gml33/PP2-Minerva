@@ -1,5 +1,7 @@
 {% extends 'app/base.html' %}
 {% block content %}
+<!--Usuario dministrador-->
+{% if rol_usuario == 'admin' %}
 <a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_periodico' %}">
     Agregar Periodico
 </a>
@@ -20,5 +22,49 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
+{% endif %}
+<!---------------------------Usuario Encargado de Prensa----------------------------------->
+{% if rol_usuario == 'prensa' %}
+<a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_periodico' %}">
+    Agregar Periodico
+</a>
+<a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_link' %}">
+    Agregar Link de interés
+</a>
+{% if links%}
+<hr>    
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    {% endif %}
+    {% if periodicos %}
+    <hr>    
+    <div style='
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;'>
+        {% for periodico in periodicos %}
+        <div class="card" style="width: 14rem;">
+            <img class="card-img-top" src='{{periodico.logo}}' alt="{{periodico.nombre}}">
+            <div class="card-body">
+                <h5 class="card-title">{{periodico.nombre}}</h5>
+                <a href="#" class="btn btn-primary">Agregar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endif %}
 {% endblock %}

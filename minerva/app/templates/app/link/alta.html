@@ -1,0 +1,25 @@
+{% extends 'app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container bg-light shadow-md p-5 form-layout">
+    <h3>Agregar Link de Interés</h3>
+    <hr>
+    <br>
+    <form method="POST" autocomplete="off" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <hr>
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'app:dashboard' %}" class="btn btn-info">Volver</a>
+            &nbsp;
+            <input type="reset" value="Cancelar" class="btn btn-secondary" />
+            &nbsp;
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+          </div>
+    </form>
+</div>
+
+{% endblock %}

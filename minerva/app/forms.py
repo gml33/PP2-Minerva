@@ -33,3 +33,8 @@ class periodicoForm(forms.ModelForm):
     class Meta:
         model=Periodico
         fields = '__all__'
+
+class linkForm(forms.ModelForm):
+    class Meta:
+        model=link
+        fields = '__all__'

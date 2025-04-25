@@ -39,11 +39,26 @@ def my_login(request):
 
 @login_required(login_url='app:my-login')
 def dashboard(request):
-    periodicos_all = Periodico.objects.all()
+    try:
+        profile_usuario = request.user.profile
+        rol_usuario = profile_usuario.rol
+        print(f"Rol del usuario: {rol_usuario}")
+    except Profile.DoesNotExists:
+        rol_usuario = None
+#----------periodicos-------------------------------------------
+    periodicos_all = Periodico.objects.all().order_by('-nombre')
     paginator = Paginator(periodicos_all, 20)
-    page = request.GET.get('page')
-    periodicos = paginator.get_page(page)
-    context = {'periodicos': periodicos}
+    page_periodicos = request.GET.get('page')
+    periodicos = paginator.get_page(page_periodicos)
+#-----------Links------------------------------------------
+    links_all = link.objects.all().order_by('-fecha')
+    paginator = Paginator(links_all, 50)
+    page_links = request.GET.get('links')
+    links = paginator.get_page(page_links)
+#-----------armo el contexto-------------------------
+    context = {'periodicos': periodicos,
+               'links':links,
+               'rol_usuario': rol_usuario}
     return render(request, 'app/dashboard.html', context=context)
 
 def user_logout(request):
@@ -64,3 +79,19 @@ def agregar_periodico(request):
         else:
             data["form"] = formulario
     return render(request, 'app/periodico/alta.html', data)
+
+#----------------------links-----------------------------------------
+
+@login_required(login_url='my-login')
+def agregar_link(request):
+    data = {
+        'form': linkForm()
+    }
+    if request.method == 'POST':
+        formulario = linkForm(data=request.POST, files=request.FILES)
+        if formulario.is_valid():
+            formulario.save()            
+            return redirect(to="app:dashboard")
+        else:
+            data["form"] = formulario
+    return render(request, 'app/link/alta.html', data)
