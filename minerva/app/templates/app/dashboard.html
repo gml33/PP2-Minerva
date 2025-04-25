@@ -37,14 +37,31 @@
     <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Id</th>
+            <th scope="col">URL</th>
+            <th scope="col">Periodico</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-
+            {% for link in links %}
+            <tr>
+                <td>{{link.id}}</td>
+                <td>{{link.url|truncatechars:15}}</td>
+                <td>{{link.periodico.nombre}}</td>
+                <td>{{link.responsableAcopio}}</td>
+                <td>{{link.fecha}}</td>
+                {% if link.aprobado == False %}
+                    <td>No Aprobado</td>
+                {% else %}
+                    <td>Aprobado</td>
+                {% endif %}
+                <td>Aprobar - Desaprobar</td>
+            </tr>
+            {% endfor %}
         </tbody>
       </table>
     {% endif %}

@@ -84,14 +84,21 @@ def agregar_periodico(request):
 
 @login_required(login_url='my-login')
 def agregar_link(request):
-    data = {
-        'form': linkForm()
-    }
     if request.method == 'POST':
-        formulario = linkForm(data=request.POST, files=request.FILES)
+        formulario = linkForm(request.POST, request.FILES)
         if formulario.is_valid():
-            formulario.save()            
+            nuevo_link = formulario.save(commit=False) # No guardamos inmediatamente
+            try:
+                nuevo_link.responsableAcopio = request.user.profile
+            except Profile.DoesNotExist:
+                # Manejar el caso en que el usuario no tiene perfil
+                pass # O podrías asignar un valor por defecto o mostrar un error
+            nuevo_link.aprobado = False
+            nuevo_link.save() # Ahora guardamos el objeto con los valores asignados
             return redirect(to="app:dashboard")
         else:
-            data["form"] = formulario
+            data = {'form': formulario}
+            return render(request, 'app/link/alta.html', data)
+    else:
+        data = {'form': linkForm()}
     return render(request, 'app/link/alta.html', data)

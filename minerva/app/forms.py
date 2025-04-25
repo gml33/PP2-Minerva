@@ -37,4 +37,4 @@ class periodicoForm(forms.ModelForm):
 class linkForm(forms.ModelForm):
     class Meta:
         model=link
-        fields = '__all__'
+        fields = ['url','periodico']

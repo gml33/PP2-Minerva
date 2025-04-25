@@ -23,23 +23,23 @@ class Profile(models.Model):
     nombre_rol = models.CharField(max_length=25, blank=True)
     comentario = models.TextField(blank=True)
     activo = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name} - {self.rol}'
     
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+    class Meta:
+        verbose_name= "Profile"
+        verbose_name_plural = "Profiles"
 
-def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name} - {self.rol}'
-
-class Meta:
-    verbose_name= "Profile"
-    verbose_name_plural = "Profiles"
 
 class Periodico(models.Model):
     nombre = models.CharField(max_length=50)
@@ -55,10 +55,10 @@ class Periodico(models.Model):
 
 class link(models.Model):
     url = models.URLField(max_length=200)
-    periodico = models.OneToOneField(Periodico, on_delete=models.CASCADE)
+    periodico = models.ForeignKey(Periodico, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
     aprobado = models.BooleanField(default=False)
-    responsableAcopio = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    responsableAcopio = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.fecha} - {self.aprobado} - {self.url}"
