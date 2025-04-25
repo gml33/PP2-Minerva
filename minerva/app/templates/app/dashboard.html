@@ -5,8 +5,44 @@
 <a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_periodico' %}">
     Agregar Periodico
 </a>
-<hr> 
+<a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_link' %}">
+    Agregar Link de interés
+</a>
+{% if links%}
+<hr>    
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">URL</th>
+            <th scope="col">Periodico</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
+            <tr>
+                <td>{{link.id}}</td>
+                <td>{{link.url|truncatechars:15}}</td>
+                <td>{{link.periodico.nombre}}</td>
+                <td>{{link.responsableAcopio}}</td>
+                <td>{{link.fecha}}</td>
+                {% if link.aprobado == False %}
+                    <td style="color: red;">No Aprobado</td>
+                {% else %}
+                    <td style="color: green">Aprobado</td>
+                {% endif %}
+                <td>Aprobar - Desaprobar</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
     {% if periodicos %}
+    <hr>    
     <div style='
     display: flex; 
     flex-direction: row;
@@ -23,7 +59,7 @@
         {% endfor %}
     </div>
     {% endif %}
-{% endif %}
+    {% endif %}
 <!---------------------------Usuario Encargado de Prensa----------------------------------->
 {% if rol_usuario == 'prensa' %}
 <a class="btn btn-outline-primary btn-small" href="{% url 'app:agregar_periodico' %}">
@@ -55,9 +91,9 @@
                 <td>{{link.responsableAcopio}}</td>
                 <td>{{link.fecha}}</td>
                 {% if link.aprobado == False %}
-                    <td>No Aprobado</td>
+                    <td style="color: red">No Aprobado</td>
                 {% else %}
-                    <td>Aprobado</td>
+                    <td style="color:green">Aprobado</td>
                 {% endif %}
                 <td>Aprobar - Desaprobar</td>
             </tr>
@@ -84,4 +120,41 @@
     </div>
     {% endif %}
     {% endif %}
+<!--Rol clasificacion-->
+{% if rol_usuario == 'clasificacion' %}
+{% if links%}
+<hr>    
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">URL</th>
+            <th scope="col">Periodico</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
+            <tr>
+                <td>{{link.id}}</td>
+                <td>{{link.url|truncatechars:15}}</td>
+                <td>{{link.periodico.nombre}}</td>
+                <td>{{link.responsableAcopio}}</td>
+                <td>{{link.fecha}}</td>
+                {% if link.aprobado == False %}
+                    <td style="color: red;">No Aprobado</td>
+                {% else %}
+                    <td style="color:green">Aprobado</td>
+                {% endif %}
+                <td>Aprobar - Desaprobar</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endif %}
+
 {% endblock %}

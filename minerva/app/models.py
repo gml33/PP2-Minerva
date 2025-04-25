@@ -11,6 +11,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rol_choices = (
+        ('-','-'),
         ('admin','admin'),
         ('prensa','prensa'),
         ('clasificacion','clasificacion'),
@@ -19,7 +20,7 @@ class Profile(models.Model):
         ('estadistica','estadistica'),
         ('edicion','edicion'),
         ('publicacion','publicacion'))
-    rol = models.CharField(max_length=25, choices=rol_choices, default='usuario')
+    rol = models.CharField(max_length=25, choices=rol_choices, default='-')
     nombre_rol = models.CharField(max_length=25, blank=True)
     comentario = models.TextField(blank=True)
     activo = models.BooleanField(default=False)

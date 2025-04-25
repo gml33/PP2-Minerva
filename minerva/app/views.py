@@ -87,14 +87,34 @@ def agregar_link(request):
     if request.method == 'POST':
         formulario = linkForm(request.POST, request.FILES)
         if formulario.is_valid():
-            nuevo_link = formulario.save(commit=False) # No guardamos inmediatamente
+            nuevo_link = formulario.save(commit=False) # No guardo inmediatamente
             try:
                 nuevo_link.responsableAcopio = request.user.profile
             except Profile.DoesNotExist:
-                # Manejar el caso en que el usuario no tiene perfil
-                pass # O podrías asignar un valor por defecto o mostrar un error
+                pass
             nuevo_link.aprobado = False
-            nuevo_link.save() # Ahora guardamos el objeto con los valores asignados
+            nuevo_link.save() 
+            return redirect(to="app:dashboard")
+        else:
+            data = {'form': formulario}
+            return render(request, 'app/link/alta.html', data)
+    else:
+        data = {'form': linkForm()}
+    return render(request, 'app/link/alta.html', data)
+
+
+@login_required(login_url='my-login')
+def aprobar_link(request):
+    if request.method == 'POST':
+        formulario = linkForm(request.POST, request.FILES)
+        if formulario.is_valid():
+            nuevo_link = formulario.save(commit=False) # No guardo inmediatamente
+            try:
+                nuevo_link.responsableAcopio = request.user.profile
+            except Profile.DoesNotExist:
+                pass
+            nuevo_link.aprobado = True
+            nuevo_link.save() 
             return redirect(to="app:dashboard")
         else:
             data = {'form': formulario}
