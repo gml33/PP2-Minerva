@@ -12,10 +12,17 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rol_choices = (
         ('admin','admin'),
-        ('editor','editor'),
-        ('usuario','usuario'))
+        ('prensa','prensa'),
+        ('clasificacion','clasificacion'),
+        ('redaccion','redaccion'),
+        ('mapas','mapas'),
+        ('estadistica','estadistica'),
+        ('edicion','edicion'),
+        ('publicacion','publicacion'))
     rol = models.CharField(max_length=25, choices=rol_choices, default='usuario')
+    nombre_rol = models.CharField(max_length=25, blank=True)
     comentario = models.TextField(blank=True)
+    activo = models.BooleanField(default=False)
     
 
 @receiver(post_save, sender=User)
@@ -27,6 +34,12 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name} - {self.rol}'
+
+class Meta:
+    verbose_name= "Profile"
+    verbose_name_plural = "Profiles"
 
 class Periodico(models.Model):
     nombre = models.CharField(max_length=50)
@@ -35,3 +48,40 @@ class Periodico(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    class Meta:
+        verbose_name= "Periodico"
+        verbose_name_plural = "Periodicos"
+
+class link(models.Model):
+    url = models.URLField(max_length=200)
+    periodico = models.OneToOneField(Periodico, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    aprobado = models.BooleanField(default=False)
+    responsableAcopio = models.OneToOneField(Profile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.fecha} - {self.aprobado} - {self.url}"
+    
+    class Meta:
+        verbose_name= "Link"
+        verbose_name_plural = "Links"
+    
+class actividad(models.Model):
+    usuario = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    tipo_choices = (
+        ('alta','alta'),
+        ('baja','baja'),
+        ('modificacion','modificacion'),
+        ('consulta','consulta'),
+        ('lista','lista'))
+    tipo = models.CharField(max_length=20, choices=tipo_choices, default='consulta')
+    entidad = models.CharField(max_length=50)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.fecha} - {self.usuario} - {self.tipo} - {self.entidad}"
+    
+    class Meta:
+        verbose_name= "Actividad"
+        verbose_name_plural = "Actividades"
