@@ -1,0 +1,20 @@
+<!-- templates/clasificacion/lista_links_pendientes.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Links Pendientes de Clasificación</title>
+</head>
+<body>
+    <h1>Links Pendientes de Clasificación</h1>
+    <ul>
+        {% for link in links %}
+            <li>
+                <a href="{% url 'clasificar_link' link.id %}">{{ link.url }}</a> - {{ link.descripcion }}
+            </li>
+        {% empty %}
+            <li>No hay links pendientes.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

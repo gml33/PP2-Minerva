@@ -1,0 +1,21 @@
+<!-- templates/articulos/lista_articulos.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Lista de Artículos</title>
+</head>
+<body>
+    <h1>Artículos Redactados</h1>
+    <ul>
+        {% for articulo in articulos %}
+            <li>
+                <a href="{% url 'ver_articulo' articulo.id %}">{{ articulo.titulo }}</a> 
+                – por {{ articulo.redactado_por.username }} el {{ articulo.fecha_redaccion|date:"d/m/Y" }}
+            </li>
+        {% empty %}
+            <li>No hay artículos registrados.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

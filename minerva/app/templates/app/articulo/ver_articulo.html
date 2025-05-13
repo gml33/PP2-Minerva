@@ -1,0 +1,34 @@
+<!-- templates/articulos/ver_articulo.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ articulo.titulo }}</title>
+</head>
+<body>
+    <h1>{{ articulo.titulo }}</h1>
+    <p><strong>Autor:</strong> {{ articulo.redactado_por.username }}</p>
+    <p><strong>Fecha:</strong> {{ articulo.fecha_redaccion|date:"d/m/Y H:i" }}</p>
+
+    <h2>Contenido</h2>
+    <p>{{ articulo.contenido }}</p>
+
+    <h2>Links utilizados</h2>
+    <ul>
+        {% for link in articulo.links_usados.all %}
+            <li><a href="{{ link.url }}" target="_blank">{{ link.url }}</a> ({{ link.get_tipo_fuente_display }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Ítems de Interés</h2>
+    <ul>
+        {% for item in articulo.items_interes.all %}
+            <li>{{ item.nombre }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if puede_exportar %}
+        <p><a href="{% url 'exportar_articulo_pdf' articulo.id %}">📄 Exportar como PDF</a></p>
+    {% endif %}
+</body>
+</html>

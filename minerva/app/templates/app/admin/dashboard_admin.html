@@ -1,0 +1,106 @@
+<!-- admin/dashboard_admin.html -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Panel de Administración</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas { max-width: 600px; margin-bottom: 2em; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2em; }
+        th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>📊 Panel de Administración</h1>
+
+    <h2>Resumen de Links</h2>
+    <canvas id="linksChart"></canvas>
+    <script>
+        const ctxLinks = document.getElementById('linksChart');
+        new Chart(ctxLinks, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendientes', 'Aprobados', 'Descartados'],
+                datasets: [{
+                    label: 'Links',
+                    data: [{{ links_pendientes }}, {{ links_aprobados }}, {{ links_descartados }}],
+                    backgroundColor: ['#fbbc05', '#34a853', '#ea4335']
+                }]
+            }
+        });
+    </script>
+
+    <h2>Resumen de Usuarios por Rol</h2>
+    <canvas id="usuariosChart"></canvas>
+    <script>
+        const ctxUsuarios = document.getElementById('usuariosChart');
+        new Chart(ctxUsuarios, {
+            type: 'bar',
+            data: {
+                labels: [
+                    {% for rol in usuarios_por_rol.keys %}
+                        '{{ rol }}'{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Usuarios',
+                    data: [
+                        {% for count in usuarios_por_rol.values %}
+                            {{ count }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    ],
+                    backgroundColor: '#4285f4'
+                }]
+            }
+        });
+    </script>
+
+    <h2>Artículos Recientes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Redactor</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for articulo in articulos_recientes %}
+                <tr>
+                    <td>{{ articulo.titulo }}</td>
+                    <td>{{ articulo.redactado_por.username }}</td>
+                    <td>{{ articulo.fecha_redaccion|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3">No hay artículos recientes.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Links Cargados Recientemente</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Fuente</th>
+                <th>Cargado por</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for link in links_recientes %}
+                <tr>
+                    <td><a href="{{ link.url }}" target="_blank">Ver</a></td>
+                    <td>{{ link.get_tipo_fuente_display }}</td>
+                    <td>{{ link.cargado_por.username }}</td>
+                    <td>{{ link.fecha_carga|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">No hay links recientes.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

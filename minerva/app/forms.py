@@ -1,40 +1,49 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.forms.widgets import PasswordInput, TextInput
+from dal import autocomplete
+from .models import Link, Articulo, EstadoClasificacion, ItemInteres
 
-from .models import *
-
-
-class CustomUserCreationForm(UserCreationForm):
-    
+# === Formulario para carga de links por Prensa ===
+class LinkForm(forms.ModelForm):
     class Meta:
-        model=User
-        fields=['username','email','password1','password2']
+        model = Link
+        exclude = ['estado_clasificacion', 'fecha_aprobacion', 'clasificado_por']
+        widgets = {
+            'individuos_mencionados': autocomplete.ModelSelect2Multiple(url='individuo-autocomplete'),
+            'bandas_mencionadas': autocomplete.ModelSelect2Multiple(url='banda-autocomplete'),
+            'barrios_mencionados': autocomplete.ModelSelect2Multiple(url='barrio-autocomplete'),
+        }
 
-#login user
-class LoginForm(AuthenticationForm):
-    username=forms.CharField(widget=TextInput())
-    password=forms.CharField(widget=PasswordInput())
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.estado_clasificacion = EstadoClasificacion.PENDIENTE
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
-class CustomUserChangeForm(UserChangeForm):
-
+# === Formulario para clasificación de links ===
+class ClasificacionForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = '__all__'
+        model = Link
+        fields = ['estado_clasificacion']
+        widgets = {
+            'estado_clasificacion': forms.Select(choices=[
+                (EstadoClasificacion.APROBADO, 'Aprobar'),
+                (EstadoClasificacion.DESCARTADO, 'Descartar')
+            ])
+        }
 
-class ProfileForm(forms.ModelForm):
+# === Formulario para creación de artículos por Redacción ===
+class ArticuloForm(forms.ModelForm):
     class Meta:
-        model = Profile
-        fields = '__all__'
+        model = Articulo
+        fields = ['titulo', 'contenido', 'links_usados', 'items_interes']
+        widgets = {
+            'links_usados': forms.CheckboxSelectMultiple,
+            'items_interes': forms.CheckboxSelectMultiple,
+        }
 
-class periodicoForm(forms.ModelForm):
-    class Meta:
-        model=Periodico
-        fields = '__all__'
-
-class linkForm(forms.ModelForm):
-    class Meta:
-        model=link
-        fields = ['url','periodico']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['links_usados'].queryset = Link.objects.filter(estado_clasificacion=EstadoClasificacion.APROBADO)
+        self.fields['items_interes'].queryset = ItemInteres.objects.none()  # Se puede actualizar vía JS

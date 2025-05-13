@@ -1,0 +1,21 @@
+<!-- templates/clasificacion/clasificar_link.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Clasificar Link</title>
+</head>
+<body>
+    <h1>Clasificar Link</h1>
+
+    <p><strong>URL:</strong> <a href="{{ link.url }}" target="_blank">{{ link.url }}</a></p>
+    <p><strong>Descripción:</strong> {{ link.descripcion }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar clasificación</button>
+    </form>
+</body>
+</html>
+

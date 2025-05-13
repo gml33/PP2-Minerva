@@ -1,0 +1,34 @@
+<!-- templates/reportes/articulo_pdf.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: sans-serif; }
+        h1 { border-bottom: 1px solid #ccc; }
+        h2 { margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <h1>{{ articulo.titulo }}</h1>
+    <p><strong>Redactor:</strong> {{ articulo.redactado_por.username }}</p>
+    <p><strong>Fecha:</strong> {{ articulo.fecha_redaccion|date:"d/m/Y H:i" }}</p>
+
+    <h2>Contenido</h2>
+    <p>{{ articulo.contenido }}</p>
+
+    <h2>Links utilizados</h2>
+    <ul>
+        {% for link in articulo.links_usados.all %}
+            <li>{{ link.url }} ({{ link.get_tipo_fuente_display }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Ítems de Interés</h2>
+    <ul>
+        {% for item in articulo.items_interes.all %}
+            <li>{{ item.nombre }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

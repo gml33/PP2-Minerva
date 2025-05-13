@@ -1,0 +1,16 @@
+<!-- templates/articulos/crear_articulo.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redactar Artículo</title>
+</head>
+<body>
+    <h1>Redactar nuevo artículo</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar artículo</button>
+    </form>
+</body>
+</html>
